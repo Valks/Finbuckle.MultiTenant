@@ -55,15 +55,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SessionStrategySample", "sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerTenantAuthenticationSample", "samples\ASP.NET Core 3\PerTenantAuthenticationSample\PerTenantAuthenticationSample.csproj", "{AE343CB5-AC60-4839-8A76-47AC6425704B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finbuckle.MultiTenant.AzureFunctions", "src\Finbuckle.MultiTenant.AzureFunctions\Finbuckle.MultiTenant.AzureFunctions.csproj", "{EC00D859-A7A2-4CF6-88E5-A05435BC1568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Finbuckle.MultiTenant.AzureFunctions", "src\Finbuckle.MultiTenant.AzureFunctions\Finbuckle.MultiTenant.AzureFunctions.csproj", "{EC00D859-A7A2-4CF6-88E5-A05435BC1568}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure Functions", "Azure Functions", "{CB8E4707-08D4-4807-AC21-4454A0B6EDFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsBasePathStrategySample", "samples\Azure Functions\FunctionsBasePathStrategySample\FunctionsBasePathStrategySample.csproj", "{92486424-EB52-4A89-93C0-2986368B6C5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsBasePathStrategySample", "samples\Azure Functions\FunctionsBasePathStrategySample\FunctionsBasePathStrategySample.csproj", "{92486424-EB52-4A89-93C0-2986368B6C5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsDataIsolationSample", "samples\Azure Functions\FunctionsDataIsolationSample\FunctionsDataIsolationSample.csproj", "{C9BBD255-3EC9-469C-B3A7-EFFF7D864408}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsDataIsolationSample", "samples\Azure Functions\FunctionsDataIsolationSample\FunctionsDataIsolationSample.csproj", "{C9BBD255-3EC9-469C-B3A7-EFFF7D864408}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsDelegateStrategySample", "samples\Azure Functions\FunctionsDelegateStrategySample\FunctionsDelegateStrategySample.csproj", "{1CA01F98-5000-46E0-8AEA-91A4815E7A65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsDelegateStrategySample", "samples\Azure Functions\FunctionsDelegateStrategySample\FunctionsDelegateStrategySample.csproj", "{1CA01F98-5000-46E0-8AEA-91A4815E7A65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsEFCoreStoreSample", "samples\Azure Functions\FunctionsEFCoreStoreSample\FunctionsEFCoreStoreSample.csproj", "{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsHostStrategySample", "samples\Azure Functions\FunctionsHostStrategySample\FunctionsHostStrategySample.csproj", "{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionsStaticStrategySample", "samples\Azure Functions\FunctionsStaticStrategySample\FunctionsStaticStrategySample.csproj", "{1E512972-C36A-4384-85FF-59F7CECB2273}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -363,6 +369,42 @@ Global
 		{1CA01F98-5000-46E0-8AEA-91A4815E7A65}.Release|x64.Build.0 = Release|Any CPU
 		{1CA01F98-5000-46E0-8AEA-91A4815E7A65}.Release|x86.ActiveCfg = Release|Any CPU
 		{1CA01F98-5000-46E0-8AEA-91A4815E7A65}.Release|x86.Build.0 = Release|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Debug|x64.Build.0 = Debug|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Debug|x86.Build.0 = Debug|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Release|x64.ActiveCfg = Release|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Release|x64.Build.0 = Release|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B}.Release|x86.Build.0 = Release|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Debug|x64.Build.0 = Debug|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Debug|x86.Build.0 = Debug|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Release|x64.ActiveCfg = Release|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Release|x64.Build.0 = Release|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Release|x86.ActiveCfg = Release|Any CPU
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4}.Release|x86.Build.0 = Release|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Debug|x64.Build.0 = Debug|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Debug|x86.Build.0 = Debug|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Release|x64.ActiveCfg = Release|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Release|x64.Build.0 = Release|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Release|x86.ActiveCfg = Release|Any CPU
+		{1E512972-C36A-4384-85FF-59F7CECB2273}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -396,6 +438,9 @@ Global
 		{92486424-EB52-4A89-93C0-2986368B6C5A} = {CB8E4707-08D4-4807-AC21-4454A0B6EDFE}
 		{C9BBD255-3EC9-469C-B3A7-EFFF7D864408} = {CB8E4707-08D4-4807-AC21-4454A0B6EDFE}
 		{1CA01F98-5000-46E0-8AEA-91A4815E7A65} = {CB8E4707-08D4-4807-AC21-4454A0B6EDFE}
+		{D5044BA6-AEAC-4DB4-BA44-DC6A90B4203B} = {CB8E4707-08D4-4807-AC21-4454A0B6EDFE}
+		{63B551C9-9DAF-4A62-AA36-47A62DAB29A4} = {CB8E4707-08D4-4807-AC21-4454A0B6EDFE}
+		{1E512972-C36A-4384-85FF-59F7CECB2273} = {CB8E4707-08D4-4807-AC21-4454A0B6EDFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5BC3DD12-0430-4740-B264-10A01463703D}
