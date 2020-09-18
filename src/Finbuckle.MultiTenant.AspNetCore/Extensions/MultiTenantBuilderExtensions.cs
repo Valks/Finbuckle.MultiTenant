@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.Security.Claims;
 using Finbuckle.MultiTenant.Internal;
+using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -149,9 +150,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds and configures a BasePathStrategy to the application.
         /// </summary>
         /// <returns>The same MultiTenantBuilder passed into the method.></returns>
-        public static FinbuckleMultiTenantBuilder<TTenantInfo> WithBasePathStrategy<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder)
+        public static FinbuckleMultiTenantBuilder<TTenantInfo> WithBasePathStrategy<TTenantInfo>(this FinbuckleMultiTenantBuilder<TTenantInfo> builder, PathString routePrefix = default)
             where TTenantInfo : class, ITenantInfo, new()
-            => builder.WithStrategy<BasePathStrategy>(ServiceLifetime.Singleton);
+            => builder.WithStrategy<BasePathStrategy>(ServiceLifetime.Singleton, routePrefix);
 
 #if NETCOREAPP2_1
         /// <summary>
