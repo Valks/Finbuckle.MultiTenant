@@ -23,7 +23,7 @@ namespace FunctionsBasePathStrategySample
 
             builder.UseMultiTenant();
 
-            throw new NotImplementedException("Still need to finish the Seeding function. <c ref=\"Startup\"/>");
+            throw new NotImplementedException("Still need to finish the Seeding function. <see cref=\"Startup\"/>");
             // SetupStore( ??? ); // Not sure if I can resolve the service at this point (I know docs say you shouldn't but for testing).
         }
 
