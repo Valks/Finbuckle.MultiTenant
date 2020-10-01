@@ -20,6 +20,13 @@ namespace Finbuckle.MultiTenant.Strategies
 {
     public class BasePathStrategy : IMultiTenantStrategy
     {
+        private PathString _routePrefix;
+
+        public BasePathStrategy(PathString routePrefix = default)
+        {
+            _routePrefix = routePrefix;
+        }
+
         public async Task<string> GetIdentifierAsync(object context)
         {
             if(!(context is HttpContext))
@@ -28,8 +35,11 @@ namespace Finbuckle.MultiTenant.Strategies
 
             var path = (context as HttpContext).Request.Path;
 
+            if(!path.StartsWithSegments(_routePrefix, out PathString remainingPath)) // Check if the path matches the route prefix
+                return null;
+
             var pathSegments =
-                path.Value.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                remainingPath.Value.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (pathSegments.Length == 0)
                 return null;
