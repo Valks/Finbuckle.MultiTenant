@@ -51,8 +51,11 @@ namespace Finbuckle.MultiTenant.CosmosDb.Stores
 
         public async Task<TTenantInfo> TryGetByIdentifierAsync(string identifier)
         {
+            // Note: Identifier returns the organisationId, use that instead.
+            //       Also the Id is better for lookup than the identifier.
             using (var iterator = _dbContext.Container.GetItemLinqQueryable<TTenantInfo>()
-                .Where(x => x.Identifier == identifier).ToFeedIterator())
+                //.Where(x => x.Identifier == identifier).ToFeedIterator())
+                .Where(x => x.Id == identifier).ToFeedIterator())
             {
                 while (iterator.HasMoreResults)
                 {
