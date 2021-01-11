@@ -9,11 +9,17 @@ namespace Microsoft.Azure.Functions.Extensions.DependencyInjection
         public static IFunctionsHostBuilder UseMultiTenant(this IFunctionsHostBuilder builder)
         {
             builder.Services.AddHttpMiddleware(nameof(MultiTenantMiddleware),
-                                               async (context, next) =>
-                                               {
-                                                   var multiTenantMiddleware = new MultiTenantMiddleware(next);
-                                                   await multiTenantMiddleware.Invoke(context);
-                                               });
+                async (context, next) =>
+                {
+                    try
+                    {
+                        var multiTenantMiddleware = new MultiTenantMiddleware(next);
+                        await multiTenantMiddleware.Invoke(context);
+                    }
+                    catch { }
+
+                    await next(context);
+                });
             return builder;
         }
     }

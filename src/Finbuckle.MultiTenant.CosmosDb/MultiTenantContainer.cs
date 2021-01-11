@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -73,26 +72,6 @@ namespace Finbuckle.MultiTenant.CosmosDb
             return _container.GetChangeFeedEstimatorBuilder(processorName, estimationDelegate, estimationPeriod);
         }
 
-        public FeedIterator<T> GetChangeFeedIterator<T>(ChangeFeedStartFrom changeFeedStartFrom, ChangeFeedRequestOptions changeFeedRequestOptions = null)
-        {
-            return _container.GetChangeFeedIterator<T>(changeFeedStartFrom, changeFeedRequestOptions);
-        }
-
-        public ChangeFeedProcessorBuilder GetChangeFeedProcessorBuilder<T>(string processorName, ChangesHandler<T> onChangesDelegate)
-        {
-            return _container.GetChangeFeedProcessorBuilder(processorName, onChangesDelegate);
-        }
-
-        public FeedIterator GetChangeFeedStreamIterator(ChangeFeedStartFrom changeFeedStartFrom, ChangeFeedRequestOptions changeFeedRequestOptions = null)
-        {
-            return _container.GetChangeFeedStreamIterator(changeFeedStartFrom, changeFeedRequestOptions);
-        }
-
-        public Task<IReadOnlyList<FeedRange>> GetFeedRangesAsync(CancellationToken cancellationToken = default)
-        {
-            return _container.GetFeedRangesAsync(cancellationToken);
-        }
-
         public IOrderedQueryable<T> GetItemLinqQueryable<T>(bool allowSynchronousQueryExecution = false, string continuationToken = null, QueryRequestOptions requestOptions = null)
         {
             return _container.GetItemLinqQueryable<T>(allowSynchronousQueryExecution, continuationToken, requestOptions);
@@ -108,11 +87,6 @@ namespace Finbuckle.MultiTenant.CosmosDb
             return _container.GetItemQueryIterator<T>(queryText, continuationToken, requestOptions);
         }
 
-        public FeedIterator<T> GetItemQueryIterator<T>(FeedRange feedRange, QueryDefinition queryDefinition, string continuationToken = null, QueryRequestOptions requestOptions = null)
-        {
-            return _container.GetItemQueryIterator<T>(feedRange, queryDefinition, continuationToken, requestOptions);
-        }
-
         public FeedIterator GetItemQueryStreamIterator(QueryDefinition queryDefinition, string continuationToken = null, QueryRequestOptions requestOptions = null)
         {
             return _container.GetItemQueryStreamIterator(queryDefinition, continuationToken, requestOptions);
@@ -121,16 +95,6 @@ namespace Finbuckle.MultiTenant.CosmosDb
         public FeedIterator GetItemQueryStreamIterator(string queryText = null, string continuationToken = null, QueryRequestOptions requestOptions = null)
         {
             return _container.GetItemQueryStreamIterator(queryText, continuationToken, requestOptions);
-        }
-
-        public FeedIterator GetItemQueryStreamIterator(FeedRange feedRange, QueryDefinition queryDefinition, string continuationToken, QueryRequestOptions requestOptions = null)
-        {
-            return _container.GetItemQueryStreamIterator(feedRange, queryDefinition, continuationToken, requestOptions);
-        }
-
-        public Task<IEnumerable<string>> GetPartitionKeyRangesAsync(FeedRange feedRange, CancellationToken cancellationToken = default)
-        {
-            return _container.GetPartitionKeyRangesAsync(feedRange, cancellationToken);
         }
 
         public Task<ContainerResponse> ReadContainerAsync(ContainerRequestOptions requestOptions = null, CancellationToken cancellationToken = default)
