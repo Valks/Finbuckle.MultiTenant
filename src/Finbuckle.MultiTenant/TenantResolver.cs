@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Andrew White
+// Copyright 2018-2020 Finbuckle LLC, Andrew White, and Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,7 +65,7 @@ namespace Finbuckle.MultiTenant
                 var _strategy = new MultiTenantStrategyWrapper(strategy, loggerFactory?.CreateLogger(strategy.GetType()));
                 var identifier = await _strategy.GetIdentifierAsync(context);
 
-                if (options.CurrentValue.IgnoredIdentifiers.Contains(identifier))
+                if (options.CurrentValue.IgnoredIdentifiers.Contains(identifier, StringComparer.OrdinalIgnoreCase))
                 {
                     Utilities.TryLoginfo(loggerFactory?.CreateLogger(GetType()), $"Ignored identifier: {identifier}");
                     identifier = null;
@@ -83,12 +84,16 @@ namespace Finbuckle.MultiTenant
                             result.StrategyInfo = new StrategyInfo { Strategy = strategy, StrategyType = strategy.GetType() };
                             result.TenantInfo = tenantInfo;
 
+                            await options.CurrentValue?.Events?.OnTenantResolved(new TenantResolvedContext { Context = context, TenantInfo = tenantInfo });
+
                             break;
                         }
                     }
 
                     if (result != null)
                         break;
+
+                    await options.CurrentValue?.Events?.OnTenantNotResolved(new TenantNotResolvedContext { Context = context, Identifier = identifier });
                 }
             }
 

@@ -1,4 +1,4 @@
-//    Copyright 2018-2020 Andrew White
+//    Copyright 2018-2020 Finbuckle LLC, Andrew White, and Contributors
 // 
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -49,13 +49,45 @@ public partial class MultiTenantBuilderExtensionsShould
         var strategy = sp.GetServices<IMultiTenantStrategy>().Where(s => s.GetType() == typeof(RemoteAuthenticationCallbackStrategy)).Single();
         Assert.NotNull(strategy);
     }
+    
+    [Fact]
+    public void ConfigurePerTenantAuthenticationCore_RegisterServices()
+    {
+        var services = new ServiceCollection();
+        services.AddAuthentication();
+        services.AddLogging();
+        services.AddMultiTenant<TestTenantInfo>()
+            .WithPerTenantAuthenticationCore();
+
+        var sp = services.BuildServiceProvider();
+
+        var authService = sp.GetRequiredService<IAuthenticationService>(); // Throws if fail
+        Assert.IsType<MultiTenantAuthenticationService<TestTenantInfo>>(authService);
+
+        var schemeProvider = sp.GetRequiredService<IAuthenticationSchemeProvider>(); // Throws if fails
+        Assert.IsType<MultiTenantAuthenticationSchemeProvider>(schemeProvider);
+    }
+    
+    [Fact]
+    public void AddRemoteAuthenticationCallbackStrategy()
+    {
+        var services = new ServiceCollection();
+        services.AddAuthentication();
+        services.AddLogging();
+        services.AddMultiTenant<TestTenantInfo>()
+            .WithRemoteAuthenticationCallbackStrategy();
+        var sp = services.BuildServiceProvider();
+        
+        var strategy = sp.GetServices<IMultiTenantStrategy>().Where(s => s.GetType() == typeof(RemoteAuthenticationCallbackStrategy)).Single();
+        Assert.NotNull(strategy);
+    }
 
     [Fact]
     public void ConfigurePerTenantAuthentication_UseChallengeScheme()
     {
         var services = new ServiceCollection();
         services.AddOptions();
-        services.AddAuthentication().AddCookie().AddOpenIdConnect();
+        services.AddAuthentication().AddCookie().AddOpenIdConnect("customScheme", null);
         services.AddMultiTenant<TestTenantInfo>()
                 .WithPerTenantAuthentication();
         var sp = services.BuildServiceProvider();
@@ -64,7 +96,31 @@ public partial class MultiTenantBuilderExtensionsShould
         {
             Id = "id1",
             Identifier = "identifier1",
-            ChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme
+            ChallengeScheme = "customScheme"
+        };
+
+        var accessor = sp.GetRequiredService<IMultiTenantContextAccessor<TestTenantInfo>>();
+        accessor.MultiTenantContext = new MultiTenantContext<TestTenantInfo> { TenantInfo = ti1 };
+
+        var options = sp.GetRequiredService<IAuthenticationSchemeProvider>();
+        Assert.Equal(ti1.ChallengeScheme, options.GetDefaultChallengeSchemeAsync().Result.Name);
+    }
+    
+    [Fact]
+    public void ConfigurePerTenantAuthenticationConventions_UseChallengeScheme()
+    {
+        var services = new ServiceCollection();
+        services.AddOptions();
+        services.AddAuthentication().AddCookie().AddOpenIdConnect("customScheme", null);
+        services.AddMultiTenant<TestTenantInfo>()
+            .WithPerTenantAuthenticationConventions();
+        var sp = services.BuildServiceProvider();
+
+        var ti1 = new TestTenantInfo
+        {
+            Id = "id1",
+            Identifier = "identifier1",
+            ChallengeScheme = "customScheme"
         };
 
         var accessor = sp.GetRequiredService<IMultiTenantContextAccessor<TestTenantInfo>>();
@@ -82,6 +138,35 @@ public partial class MultiTenantBuilderExtensionsShould
         services.AddAuthentication().AddOpenIdConnect();
         services.AddMultiTenant<TestTenantInfo>()
                 .WithPerTenantAuthentication();
+        var sp = services.BuildServiceProvider();
+
+        var ti1 = new TestTenantInfo
+        {
+            Id = "id1",
+            Identifier = "identifier1",
+            OpenIdConnectAuthority = "https://tenant",
+            OpenIdConnectClientId = "tenant",
+            OpenIdConnectClientSecret = "secret"
+        };
+
+        var accessor = sp.GetRequiredService<IMultiTenantContextAccessor<TestTenantInfo>>();
+        accessor.MultiTenantContext = new MultiTenantContext<TestTenantInfo> { TenantInfo = ti1 };
+
+        var options = sp.GetRequiredService<IOptionsSnapshot<OpenIdConnectOptions>>().Get(OpenIdConnectDefaults.AuthenticationScheme);
+
+        Assert.Equal(ti1.OpenIdConnectAuthority, options.Authority);
+        Assert.Equal(ti1.OpenIdConnectClientId, options.ClientId);
+        Assert.Equal(ti1.OpenIdConnectClientSecret, options.ClientSecret);
+    }
+    
+    [Fact]
+    public void ConfigurePerTenantAuthenticationConventions_UseOpenIdConnectConvention()
+    {
+        var services = new ServiceCollection();
+        services.AddOptions();
+        services.AddAuthentication().AddOpenIdConnect();
+        services.AddMultiTenant<TestTenantInfo>()
+            .WithPerTenantAuthenticationConventions();
         var sp = services.BuildServiceProvider();
 
         var ti1 = new TestTenantInfo
@@ -131,9 +216,38 @@ public partial class MultiTenantBuilderExtensionsShould
         Assert.Equal(ti1.CookieLogoutPath, options.LogoutPath);
         Assert.Equal(ti1.CookieAccessDeniedPath, options.AccessDeniedPath);
     }
+    
+    [Fact]
+    public void ConfigurePerTenantAuthenticationConventions_UseCookieOptionsConvention()
+    {
+        var services = new ServiceCollection();
+        services.AddOptions();
+        services.AddAuthentication().AddCookie();
+        services.AddMultiTenant<TestTenantInfo>()
+            .WithPerTenantAuthenticationConventions();
+        var sp = services.BuildServiceProvider();
+
+        var ti1 = new TestTenantInfo
+        {
+            Id = "id1",
+            Identifier = "identifier1",
+            CookieLoginPath = "/path1",
+            CookieLogoutPath = "/path2",
+            CookieAccessDeniedPath = "/path3"
+        };
+
+        var accessor = sp.GetRequiredService<IMultiTenantContextAccessor<TestTenantInfo>>();
+        accessor.MultiTenantContext = new MultiTenantContext<TestTenantInfo> { TenantInfo = ti1 };
+
+        var options = sp.GetRequiredService<IOptionsSnapshot<CookieAuthenticationOptions>>().Get(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        Assert.Equal(ti1.CookieLoginPath, options.LoginPath);
+        Assert.Equal(ti1.CookieLogoutPath, options.LogoutPath);
+        Assert.Equal(ti1.CookieAccessDeniedPath, options.AccessDeniedPath);
+    }
 
     [Fact]
-    public void ThrowIfCantDecorateIAuthenticationService()
+    public void WithPerTenantAuthentication_ThrowIfCantDecorateIAuthenticationService()
     {
         var services = new ServiceCollection();
         var builder = new FinbuckleMultiTenantBuilder<TenantInfo>(services);
@@ -151,6 +265,30 @@ public partial class MultiTenantBuilderExtensionsShould
 
         var strategy = sp.GetRequiredService<IMultiTenantStrategy>();
         Assert.IsType<BasePathStrategy>(strategy);
+    }
+
+    [Fact]
+    public void AddClaimStrategy()
+    {
+        var services = new ServiceCollection();
+        var builder = new FinbuckleMultiTenantBuilder<TenantInfo>(services);
+        builder.WithClaimStrategy();
+        var sp = services.BuildServiceProvider();
+
+        var strategy = sp.GetRequiredService<IMultiTenantStrategy>();
+        Assert.IsType<ClaimStrategy>(strategy);
+    }
+
+    [Fact]
+    public void AddHeaderStrategy()
+    {
+        var services = new ServiceCollection();
+        var builder = new FinbuckleMultiTenantBuilder<TenantInfo>(services);
+        builder.WithHeaderStrategy();
+        var sp = services.BuildServiceProvider();
+
+        var strategy = sp.GetRequiredService<IMultiTenantStrategy>();
+        Assert.IsType<HeaderStrategy>(strategy);
     }
 
     [Fact]

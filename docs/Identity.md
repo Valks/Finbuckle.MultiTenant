@@ -11,19 +11,19 @@ Configuring an Identity db context to be multitenant is identical to that of a r
 
 The simplest approach is to derive a db context from `MultiTenantIdentityDbContext` (which itself derives from `IdentityDbContext`) and configure Identity to use the derived context.
 
-When customizing the Identity data model, for example deriving a user entity type class from `IdenityUser`, to designate the customized entity type as multitenant either:
+When customizing the Identity data model, for example deriving a user entity type class from `IdentityUser`, to designate the customized entity type as multitenant either:
 - Add the `[MultiTenant]` data attribute to the entity type class, or
 - use the `IsMultiTenant` fluent api method in `OnModelCreating` **after** calling the base class `OnModelCreating` method (to ensure the Identity model exists).
 
 If not deriving from `MultiTenantIdentityDbContext` make sure to implement `IMultiTenantDbContext` and call the appropriate extension methods as described in [Data Isolation with Entity Framework Core](EFCore). In this case it is required that base class `OnModelCreating` method is called **before** any multitenant extension methods.
 
 ## Caveats
-Internally Finbuckle.MultiTenant's EFCore funtionality relies on a global query filter. Calling the `Find` method on an `DBSet<T>` bypasses this filter thus any place Identity uses this method internally is not filtered by multitenant.
+Internally Finbuckle.MultiTenant's EFCore functionality relies on a global query filter. Calling the `Find` method on an `DBSet<T>` bypasses this filter thus any place Identity uses this method internally is not filtered by multitenant.
 
-Due to this limitation the Idenity method `UserManager<TUser>.FindByIdAsync` will bypass the filter and search across all tenants in the database. The `IdentityUser` class uses a GUID for the user id so there is negligable risk of data spillover, however a different implementation of `IdentityUser<TKey>` will need to ensure global uniqueness for the user id.
+Due to this limitation the Identity method `UserManager<TUser>.FindByIdAsync` will bypass the filter and search across all tenants in the database. The `IdentityUser` class uses a GUID for the user id so there is negligible risk of data spillover, however a different implementation of `IdentityUser<TKey>` will need to ensure global uniqueness for the user id.
 
 ## Identity Options
-Identity options can be configured for the `IdentityOptions` class as described in (Per-Tenant Options). Any option that internally relies on `UserManager<TUser>.FindByIdAsync` may be problematic as describeed above. If in doubt check the Identity source code to be sure.
+Identity options can be configured for the `IdentityOptions` class as described in (Per-Tenant Options). Any option that internally relies on `UserManager<TUser>.FindByIdAsync` may be problematic as described above. If in doubt check the Identity source code to be sure.
 
 The Identity option to require a unique email address per user will require email addresses be unique only within the current tenant, i.e. per-tenant options are not required for this.
 
@@ -32,7 +32,7 @@ ASP.NET Core Identity cookies for authentication. It uses a [slightly different 
 
 Finbuckle.Multitenant can isolate Identity authentication per tenant so that user sessions are unique per tenant. See [per-tenant authentication](Authentication) for information on how to customize authentication options per tenant.
 
-## Identity Model Customization with MultiTenantIdenitityDbContext
+## Identity Model Customization with MultiTenantIdentityDbContext
 The [ASP.NET Core Identity data model](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-2.2#the-identity-model) relies on several types which are passed to the database context as generic parameters: 
 - `TUser`
 - `TRole`

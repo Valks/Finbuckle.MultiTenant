@@ -16,8 +16,8 @@ public void ConfigureServices(IServiceCollection services)
 
 ## AddMultiTenant<T>
 `AddMultiTenant<T>` is an extension method on `IServiceCollection` which registers the basic dependencies needed by the library.
-The `T` type paramter determines the type of the `ITenantInfo` object used throughout the library. `TenantInfo` provides a basic
-immplementation of `ITenantInfo`, but a custom implementation can and should be provided. It returns a `MultiTenantBuilder<T>` instance on which the methods below can be called for further configuration. Each of these methods returns the same `MultiTenantBuilder<T>` instance allowing for chaining method calls.
+The `T` type parameter determines the type of the `ITenantInfo` object used throughout the library. `TenantInfo` provides a basic
+implementation of `ITenantInfo`, but a custom implementation can and should be provided. It returns a `MultiTenantBuilder<T>` instance on which the methods below can be called for further configuration. Each of these methods returns the same `MultiTenantBuilder<T>` instance allowing for chaining method calls.
 
 ## WithStore Variants
 Adds and configures an IMultiTenantStore to the application. Only the last store configured will be used. See [MultiTenant Stores](Stores) for more information on each type.
@@ -26,14 +26,16 @@ Adds and configures an IMultiTenantStore to the application. Only the last store
 - WithInMemoryStore
 - WithConfigurationStore
 - WithEFCoreStore
+- WithDistributedCacheStore
 
 ## WithStrategy Variants
 Adds and configures an IMultiTenantStore to the application. Multiple strategies can be configured and each will be used in the order registered. See [MultiTenant Strategies](Strategies) for more information on each type.
 
 - WithStrategy&lt;TStrategy&gt;
 - WithBasePathStrategy
-- WithClaimsStrategy
+- WithClaimStrategy
 - WithDelegateStrategy
+- WithHeaderStrategy
 - WithHostStrategy
 - WithRouteStrategy
 - WithSessionStrategy
@@ -94,7 +96,7 @@ var newTenantInfo = new TenantInfo(...);
 if(HttpContext.TrySetTenantInfo(newTenantInfo, resetServiceProvider: true))
 {
     // This will be the new tenant.
-    var tenant = HttpContext.GetMultiTenantContext().TenantIno;
+    var tenant = HttpContext.GetMultiTenantContext().TenantInfo;
 
     // This will regenerate the options class.
     var optionsProvider = HttpContext.RequestServices.GetService<IOptions<MyScopedOptions>>();

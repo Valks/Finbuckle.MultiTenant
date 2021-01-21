@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Andrew White
+// Copyright 2018-2020 Finbuckle LLC, Andrew White, and Contributors
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -22,6 +23,7 @@ using System.Linq.Expressions;
 #if NETSTANDARD2_0
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Collections.Generic;
+using Remotion.Linq.Parsing.ExpressionVisitors;
 #endif
 
 namespace Finbuckle.MultiTenant.EntityFrameworkCore
@@ -34,13 +36,11 @@ namespace Finbuckle.MultiTenant.EntityFrameworkCore
         }
 
         internal static LambdaExpression GetQueryFilter(this EntityTypeBuilder builder)
-        {
-#if NETSTANDARD2_1
-            return builder.Metadata.GetQueryFilter();
-#elif NETSTANDARD2_0
+        {         
+#if NETSTANDARD2_0
             return builder.Metadata.QueryFilter;
 #else
-#error No valid path!
+            return builder.Metadata.GetQueryFilter();
 #endif
         }
 
@@ -51,8 +51,11 @@ namespace Finbuckle.MultiTenant.EntityFrameworkCore
         /// <typeparam name="T">The specific type of <see cref="EntityTypeBuilder"/></typeparam>
         /// <param name="builder">The entity's type builder</param>
         /// <returns>The original type builder reference for chaining</returns>
-        public static T IsMultiTenant<T>(this T builder) where T : EntityTypeBuilder
+        public static EntityTypeBuilder<T> IsMultiTenant<T>(this EntityTypeBuilder<T> builder) where T : class
         {
+            if(builder.Metadata.FindAnnotation(Constants.MultiTenantAnnotationName) != null)
+                return builder;
+
             builder.HasAnnotation(Constants.MultiTenantAnnotationName, true);
 
             try
@@ -65,47 +68,23 @@ namespace Finbuckle.MultiTenant.EntityFrameworkCore
             }
 
             // build expression tree for e => EF.Property<string>(e, "TenantId") == TenantInfo.Id
-
-            // where e is one of our entity types
-            // will need this ParameterExpression for next step and for final step
-            var entityParamExp = Expression.Parameter(builder.Metadata.ClrType, "e");
-
+            Expression<Func<T, bool>> tenantFilter = e => EF.Property<string>(e, "TenantId") == (new ExpressionVariableScope()).Context.TenantInfo.Id;
+            
+            // combine withany existing query filter if it exists
             var existingQueryFilter = builder.GetQueryFilter();
-
-            // override to match existing query paraameter if applicable
-            if (existingQueryFilter != null)
+            if(existingQueryFilter != null)
             {
-                entityParamExp = existingQueryFilter.Parameters.First();
+                // replace the parameter node in the tenant filter with the one in the existing filter
+                var filterParam = existingQueryFilter.Parameters.Single();
+                var adjustedTenantFilterBody = ReplacingExpressionVisitor.Replace(tenantFilter.Parameters.Single(),
+                                                                              filterParam,
+                                                                              tenantFilter.Body);
+
+                var combinedExp = Expression.AndAlso(existingQueryFilter.Body, adjustedTenantFilterBody);
+                tenantFilter = (Expression<Func<T, bool>>)Expression.Lambda(combinedExp, filterParam);
             }
-
-            // build up expression tree for: EF.Property<string>(e, "TenantId")
-            var tenantIdExp = Expression.Constant("TenantId", typeof(string));
-            var efPropertyExp = Expression.Call(typeof(EF), nameof(EF.Property), new[] { typeof(string) }, entityParamExp, tenantIdExp);
-            var leftExp = efPropertyExp;
-
-            // build up express tree for: TenantInfo.Id
-            // EF will magically sub the current db context in for scope.Context
-            var scopeConstantExp = Expression.Constant(new ExpressionVariableScope());
-            var contextMemberInfo = typeof(ExpressionVariableScope).GetMember(nameof(ExpressionVariableScope.Context))[0];
-            var contextMemberAccessExp = Expression.MakeMemberAccess(scopeConstantExp, contextMemberInfo);
-            var contextTenantInfoExp = Expression.Property(contextMemberAccessExp, nameof(IMultiTenantDbContext.TenantInfo));
-            var rightExp = Expression.Property(contextTenantInfoExp, nameof(IMultiTenantDbContext.TenantInfo.Id));
-
-            // build expression tree for EF.Property<string>(e, "TenantId") == TenantInfo.Id'
-            var predicate = Expression.Equal(leftExp, rightExp);
-
-            // combine with existing filter
-            if (existingQueryFilter != null)
-            {
-                predicate = Expression.AndAlso(existingQueryFilter.Body, predicate);
-            }
-
-            // build the final expression tree
-            var delegateType = Expression.GetDelegateType(builder.Metadata.ClrType, typeof(bool));
-            var lambdaExp = Expression.Lambda(delegateType, predicate, entityParamExp);
-
-            // set the filter
-            builder.HasQueryFilter(lambdaExp);
+            
+            builder.HasQueryFilter(tenantFilter);
 
             Type clrType = builder.Metadata.ClrType;
 
@@ -134,13 +113,21 @@ namespace Finbuckle.MultiTenant.EntityFrameworkCore
         private static void UpdateIdentityUserIndex(this EntityTypeBuilder builder)
         {
             builder.RemoveIndex("NormalizedUserName");
+#if NET // Covers .NET 5.0 and later.
+            builder.HasIndex("NormalizedUserName", "TenantId").HasDatabaseName("UserNameIndex").IsUnique();
+#else   // .NET Core 2.1 and 3.1
             builder.HasIndex("NormalizedUserName", "TenantId").HasName("UserNameIndex").IsUnique();
+#endif
         }
 
         private static void UpdateIdentityRoleIndex(this EntityTypeBuilder builder)
         {
             builder.RemoveIndex("NormalizedName");
+#if NET // Covers .NET 5.0 and later.
+            builder.HasIndex("NormalizedName", "TenantId").HasDatabaseName("RoleNameIndex").IsUnique();
+#else // .NET Core 2.1 and 3.1
             builder.HasIndex("NormalizedName", "TenantId").HasName("RoleNameIndex").IsUnique();
+#endif
         }
 
         private static void UpdateIdentityUserLoginPrimaryKey(this EntityTypeBuilder builder)
@@ -158,16 +145,14 @@ namespace Finbuckle.MultiTenant.EntityFrameworkCore
         }
 
         private static void RemoveIndex(this EntityTypeBuilder builder, string propName)
-        {
-#if NETSTANDARD2_1
-            var prop = builder.Metadata.FindProperty(propName);
-            var index = builder.Metadata.FindIndex(prop);
-            builder.Metadata.RemoveIndex(index);
-#elif NETSTANDARD2_0
+        {        
+#if NETSTANDARD2_0
             var props = new List<IProperty>(new[] { builder.Metadata.FindProperty(propName) });
             builder.Metadata.RemoveIndex(props);
 #else
-#error No valid path!
+            var prop = builder.Metadata.FindProperty(propName);
+            var index = builder.Metadata.FindIndex(prop);
+            builder.Metadata.RemoveIndex(index);
 #endif
         }
     }
