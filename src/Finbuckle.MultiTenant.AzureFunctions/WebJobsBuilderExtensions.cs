@@ -7,17 +7,16 @@ using System.Text;
 
 namespace Finbuckle.MultiTenant.AzureFunctions
 {
-    public static class FunctionsHostBuilderExtensions
+    public static class WebJobsBuilderExtensions
     {
-        public static IWebJobsBuilder AddTenantBindings<TTenantInfo>(this IWebJobsBuilder builder)
-            where TTenantInfo : class, ITenantInfo, new()
+        public static IWebJobsBuilder AddTenantBindings(this IWebJobsBuilder builder)
         {
             if(builder is null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.AddExtension<TenantExtensionProvider<TTenantInfo>>();
+            builder.AddExtension<TenantExtensionProvider>();
             return builder;
         }
     }

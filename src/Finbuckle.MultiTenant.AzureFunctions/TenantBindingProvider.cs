@@ -12,10 +12,11 @@ namespace Finbuckle.MultiTenant.AzureFunctions
     /// <summary>
     /// Provides a new binding instance for the function host.
     /// </summary>
-    public class TenantBindingProvider<TTenantInfo> : IBindingProvider
-        where TTenantInfo : class, ITenantInfo, new()
+    public class TenantBindingProvider : IBindingProvider
     {
+        // Name of binding data slot where we place the full HttpRequestMessage
         internal const string RequestBindingName = "$request";
+        private static readonly Task<IBinding> NullBinding = Task.FromResult<IBinding>(null);
 
         public Task<IBinding> TryCreateAsync(BindingProviderContext context)
         {
@@ -25,16 +26,13 @@ namespace Finbuckle.MultiTenant.AzureFunctions
             }
 
             var parameter = context.Parameter;
-            if(parameter.ParameterType == typeof(HttpRequest))
+
+            if (!HasBindingAttributes(parameter))
             {
-                // Not already claimed by another trigger?
-                if (!HasBindingAttributes(parameter))
-                {
-                    return Task.FromResult<IBinding>(new TenantBinding<TTenantInfo>());
-                }
+                return Task.FromResult<IBinding>(new TenantBinding());
             }
 
-            return Task.FromResult<IBinding>(null);
+            return NullBinding;
         }
 
         private static bool HasBindingAttributes(ParameterInfo parameter)

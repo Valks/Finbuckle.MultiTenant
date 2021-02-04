@@ -10,8 +10,7 @@ namespace Finbuckle.MultiTenant.AzureFunctions
     /// <summary>
     /// Runs on every request and passes the function context (e.g. Http request and host configuration) to a value provider.
     /// </summary>
-    public class TenantBinding<TTenantInfo> : IBinding
-        where TTenantInfo : class, ITenantInfo, new()
+    public class TenantBinding : IBinding
     {
         public bool FromAttribute { get { return false; } }
 
@@ -24,7 +23,7 @@ namespace Finbuckle.MultiTenant.AzureFunctions
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            var request = context.BindingData[TenantBindingProvider<TTenantInfo>.RequestBindingName];
+            var request = context.BindingData[TenantBindingProvider.RequestBindingName];
 
             return BindAsync(request, context.ValueContext);
         }
@@ -34,7 +33,7 @@ namespace Finbuckle.MultiTenant.AzureFunctions
             var request = value as HttpRequest;
             if(request != null)
             {
-                var binding = new TenantValueProvider<TTenantInfo>(request);
+                var binding = new TenantValueProvider(request);
                 return Task.FromResult<IValueProvider>(binding);
             }
             throw new InvalidOperationException($"value must be an {nameof(HttpRequest)}");
