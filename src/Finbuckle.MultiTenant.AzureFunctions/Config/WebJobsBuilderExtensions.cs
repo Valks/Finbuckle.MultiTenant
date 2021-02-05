@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Finbuckle.MultiTenant.AzureFunctions
+namespace Finbuckle.MultiTenant.AzureFunctions.Config
 {
     public static class WebJobsBuilderExtensions
     {
@@ -16,7 +16,7 @@ namespace Finbuckle.MultiTenant.AzureFunctions
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            builder.AddExtension<TenantExtensionProvider>();
+            builder.AddExtension<TenantExtensionConfigProvider>();
             return builder;
         }
     }

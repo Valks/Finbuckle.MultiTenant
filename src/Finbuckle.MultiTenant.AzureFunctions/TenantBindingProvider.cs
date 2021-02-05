@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Finbuckle.MultiTenant.AzureFunctions.Bindings;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 
 using System;
@@ -29,7 +31,8 @@ namespace Finbuckle.MultiTenant.AzureFunctions
 
             if (!HasBindingAttributes(parameter))
             {
-                return Task.FromResult<IBinding>(new TenantBinding());
+                Type genericType = typeof(TenantBinding<>).MakeGenericType(parameter.ParameterType);
+                return Task.FromResult((IBinding)Activator.CreateInstance(genericType));
             }
 
             return NullBinding;
@@ -39,7 +42,7 @@ namespace Finbuckle.MultiTenant.AzureFunctions
         {
             foreach (Attribute attr in parameter.GetCustomAttributes(false))
             {
-                if (IsBindingAttribute(attr))
+                if (IsBindingAttribute(attr) && parameter.ParameterType is ITenantInfo)
                 {
                     return true;
                 }
