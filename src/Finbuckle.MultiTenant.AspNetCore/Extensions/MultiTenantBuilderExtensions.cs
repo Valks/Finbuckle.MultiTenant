@@ -118,6 +118,15 @@ namespace Microsoft.Extensions.DependencyInjection
                 try { options.AccessDeniedPath = ((string)d.CookieAccessDeniedPath).Replace(Constants.TenantToken, tc.Identifier); } catch { }
             });
 
+            builder.WithRemoteAuthenticationCallbackStrategy();
+            
+            // We need to "decorate" IAuthenticationService so callbacks so that
+            // remote authentication can get the tenant from the authentication
+            // properties in the state parameter.
+            if (!builder.Services.Where(s => s.ServiceType == typeof(IAuthenticationService)).Any())
+                throw new MultiTenantException("WithRemoteAuthenticationCallbackStrategy() must be called after AddAuthorization() in ConfigureServices.");
+            builder.Services.DecorateService<IAuthenticationService, MultiTenantAuthenticationService<TTenantInfo>>();
+
             // Set per-tenant OpenIdConnect options by convention.
             builder.WithPerTenantOptions<OpenIdConnectOptions>((options, tc) =>
             {

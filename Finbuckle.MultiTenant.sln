@@ -75,6 +75,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionsStaticStrategySamp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClaimStrategySample", "samples\ASP.NET Core 3\ClaimStrategySample\ClaimStrategySample.csproj", "{29C8A608-7BC1-47D2-ADA8-9AEC72CD8F59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClaimStrategySample", "samples\ASP.NET Core 3\ClaimStrategySample\ClaimStrategySample.csproj", "{29C8A608-7BC1-47D2-ADA8-9AEC72CD8F59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -474,5 +476,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51084122-7402-4536-A832-4248C51446FE}
+		{29C8A608-7BC1-47D2-ADA8-9AEC72CD8F59} = {BD5BD485-39EB-4174-84CC-0BC0E7366462}
 	EndGlobalSection
 EndGlobal
