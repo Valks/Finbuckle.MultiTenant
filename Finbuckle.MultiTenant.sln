@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClaimStrategySample", "samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Finbuckle.MultiTenant.CosmosDb", "src\Finbuckle.MultiTenant.CosmosDb\Finbuckle.MultiTenant.CosmosDb.csproj", "{1A10D1F3-0D1C-4AE2-8E8A-EEECD93F8AD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosStoreSample", "samples\ASP.NET Core 3\CosmosStoreSample\CosmosStoreSample.csproj", "{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -333,6 +335,18 @@ Global
 		{1A10D1F3-0D1C-4AE2-8E8A-EEECD93F8AD0}.Release|x64.Build.0 = Release|Any CPU
 		{1A10D1F3-0D1C-4AE2-8E8A-EEECD93F8AD0}.Release|x86.ActiveCfg = Release|Any CPU
 		{1A10D1F3-0D1C-4AE2-8E8A-EEECD93F8AD0}.Release|x86.Build.0 = Release|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Release|x64.Build.0 = Release|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -363,6 +377,7 @@ Global
 		{AE343CB5-AC60-4839-8A76-47AC6425704B} = {BD5BD485-39EB-4174-84CC-0BC0E7366462}
 		{29C8A608-7BC1-47D2-ADA8-9AEC72CD8F59} = {BD5BD485-39EB-4174-84CC-0BC0E7366462}
 		{1A10D1F3-0D1C-4AE2-8E8A-EEECD93F8AD0} = {CCC3146F-320C-4E1D-8017-056C9DCB6B0C}
+		{2DCFEF89-B30C-4BC2-9E2B-FF03346CD1FA} = {BD5BD485-39EB-4174-84CC-0BC0E7366462}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88564B4D-282B-4BEA-9B33-1017EF22555D}
