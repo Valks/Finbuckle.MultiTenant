@@ -2,7 +2,6 @@
 using Finbuckle.MultiTenant.CosmosDb.Stores;
 
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Fluent;
 
 using System;
 
