@@ -13,6 +13,7 @@
 //    limitations under the License.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Finbuckle.MultiTenant.Internal;
 using Microsoft.AspNetCore.Authentication;
@@ -24,12 +25,14 @@ namespace Finbuckle.MultiTenant.Strategies
 	public class ClaimStrategy : IMultiTenantStrategy
 	{
 		private readonly string _tenantKey;
-		public ClaimStrategy(string template)
+		private readonly string _authenticationScheme;
+		public ClaimStrategy(string template, string authenticationScheme = null)
 		{
 			if (string.IsNullOrWhiteSpace(template))
 				throw new ArgumentException(nameof(template));
 
 			_tenantKey = template;
+			_authenticationScheme = authenticationScheme;
 		}
 
 		public async Task<string> GetIdentifierAsync(object context)
@@ -39,8 +42,16 @@ namespace Finbuckle.MultiTenant.Strategies
 
 			if (!httpContext.User.Identity.IsAuthenticated)
 			{
+				AuthenticationScheme authScheme;
 				var schemeProvider = httpContext.RequestServices.GetRequiredService<IAuthenticationSchemeProvider>();
-				var authScheme = await schemeProvider.GetDefaultAuthenticateSchemeAsync();
+				if (_authenticationScheme is null)
+				{
+					authScheme = await schemeProvider.GetDefaultAuthenticateSchemeAsync();
+				}
+				else
+				{
+					authScheme = (await schemeProvider.GetAllSchemesAsync()).FirstOrDefault(x => x.Name == _authenticationScheme);
+				}
 
 				var handler = (IAuthenticationHandler)ActivatorUtilities.CreateInstance(httpContext.RequestServices, authScheme.HandlerType);
 				await handler.InitializeAsync(authScheme, httpContext);
