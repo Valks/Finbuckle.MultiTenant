@@ -25,7 +25,7 @@ namespace Finbuckle.MultiTenant.AzureFunctions.Bindings
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            if (context.BindingData[TenantBindingProvider.RequestBindingName] is not HttpRequest request)
+            if(!context.BindingData.ContainsKey(TenantBindingProvider.RequestBindingName) || context.BindingData[TenantBindingProvider.RequestBindingName] is not HttpRequest request)
             {
                 throw new NotSupportedException($"Argument {nameof(HttpRequest)} is null. {nameof(TenantAttribute)} must work with HttpTrigger.");
             }
